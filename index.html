@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>SPPS Generator</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+
+</head>
+
+<body>
+    <script src="genTable.js"></script>
+    <input id="sequenceText" type="text">
+    <button id="generateButton">Generate</button>
+    <table id="SPPSTable">
+        <tr>
+            <th id="residue">Residue</th>
+            <th id="protectedAA">Protected AA</th>
+            <th id="molecularWeight">Molecular Weight</th>
+            <th id="calculation">Mass Needed for 2.5mL of 0.2M</th>
+            <!-- stuff -->
+        </tr>
+    </table>
+
+    <script>
+        const button = document.getElementById("generateButton");
+
+        button.addEventListener("click", function () {
+            const sequence = document.getElementById("sequenceText").value.toUpperCase();
+            const table = document.getElementById('SPPSTable');
+            const cols = 4;
+
+
+            for (let i = 0; i < sequence.length; i++) {
+                if (sequence[i] == 'N' || sequence[i] == 'C' || sequence[i] == 'H') {
+                    let row = document.createElement('tr');
+                    table.appendChild(row);
+                    createTableCell(row, i + 1, `Fmoc-${sequence[i]}-OH`, getMolecularWeight(sequence[i]));
+                    let row2 = document.createElement('tr');
+                    table.appendChild(row2);
+                    createTableCellDoubleCoupling(row2, i + 1, `Fmoc-${sequence[i]}-OH`, getMolecularWeight(sequence[i]));
+                }
+                else {
+                    let row = document.createElement('tr');
+                    table.appendChild(row);
+
+                    // Create table cells based on the current character in the sequence
+                    createTableCell(row, i + 1, `Fmoc-${sequence[i]}-OH`, getMolecularWeight(sequence[i]));
+                }
+            }
+        });
+
+        function createTableCell(row, index, name, molecularWeight) {
+            let cellIndex = document.createElement('td');
+            cellIndex.textContent = index;
+            row.appendChild(cellIndex);
+
+            let cellName = document.createElement('td');
+            cellName.textContent = name;
+            row.appendChild(cellName);
+
+            let cellMW = document.createElement('td');
+            cellMW.textContent = molecularWeight;
+            row.appendChild(cellMW);
+
+            let cellAmount = document.createElement('td');
+            cellAmount.textContent = 0.0125 * molecularWeight;
+            row.appendChild(cellAmount);
+        }
+
+        function createTableCellDoubleCoupling(row, index, name, molecularWeight) {
+            let cellIndex = document.createElement('td');
+            cellIndex.textContent = null;
+            row.appendChild(cellIndex);
+
+
+            let cellName = document.createElement('td');
+            cellName.textContent = name;
+            row.appendChild(cellName);
+
+            let cellMW = document.createElement('td');
+            cellMW.textContent = molecularWeight;
+            row.appendChild(cellMW);
+
+            let cellAmount = document.createElement('td');
+            cellAmount.textContent = 0.0125 * molecularWeight;
+            row.appendChild(cellAmount);
+        }
+        function getMolecularWeight(aminoAcid) {
+            const molecularWeights = {
+                'A': 311.33,
+                'V': 339.39,
+                'I': 353.41,
+                'L': 353.41,
+                'L': 353.41,
+                'M': 371.45,
+                'F': 387.43,
+                'Y': 403.43,
+                'W': 426.46,
+                'S': 327.33,
+                'T': 341.36,
+                'N': 354.36,
+                'Q': 368.38,
+                'C': 576.66,
+                'G': 297.31,
+                'P': 337.37,
+                'R': 396.44,
+                'H': 619.71,
+                'K': 368.43,
+                'D': 537.69,
+                'E': 617.67,
+                'B': 325.36,
+
+
+
+
+            };
+            return molecularWeights[aminoAcid] || 0; 
+        }
+    </script>
+</body>
+
+</html>
